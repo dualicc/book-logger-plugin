@@ -29,6 +29,10 @@ public class BookLogger extends JavaPlugin implements Listener {
 
         BookMeta meta = event.getNewBookMeta();
 
+if (meta == null) {
+    return;
+}
+
         StringBuilder data = new StringBuilder();
 
         data.append("Player: ").append(event.getPlayer().getName()).append("\n");
