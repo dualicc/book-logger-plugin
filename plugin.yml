@@ -1,7 +1,6 @@
 name: BookLogger
 version: 1.0
 main: BookLogger
-api-version: 1.20
 
 commands:
   viewbooks:
