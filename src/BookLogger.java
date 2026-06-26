@@ -17,46 +17,54 @@ public class BookLogger extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
+        getLogger().info("BookLogger enabled.");
     }
 
     @EventHandler
     public void onBookSign(PlayerEditBookEvent event) {
-        BookMeta meta = event.getNewBookMeta();
-        if (meta == null) return;
 
-        books.add(
-                "Title: " + meta.getTitle() +
-                "\nAuthor: " + meta.getAuthor() +
-                "\nPages: " + meta.getPages()
-        );
+        if (!event.isSigning()) {
+            return;
+        }
+
+        BookMeta meta = event.getNewBookMeta();
+
+        StringBuilder data = new StringBuilder();
+
+        data.append("Player: ").append(event.getPlayer().getName()).append("\n");
+        data.append("Title: ").append(meta.getTitle()).append("\n");
+        data.append("Author: ").append(meta.getAuthor()).append("\n");
+
+        int page = 1;
+        for (String text : meta.getPages()) {
+            data.append("Page ").append(page++).append(": ").append(text).append("\n");
+        }
+
+        books.add(data.toString());
+
+        getLogger().info("Saved book from " + event.getPlayer().getName());
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Players only.");
+        if (!command.getName().equalsIgnoreCase("viewbooks")) {
+            return false;
+        }
+
+        if (books.isEmpty()) {
+            sender.sendMessage("No books have been saved.");
             return true;
         }
 
-        Player player = (Player) sender;
+        sender.sendMessage("§6Saved Books:");
 
-        if (command.getName().equalsIgnoreCase("viewbooks")) {
-
-            if (books.isEmpty()) {
-                player.sendMessage("No books saved yet.");
-                return true;
-            }
-
-            player.sendMessage("=== Books ===");
-
-            for (String book : books) {
-                player.sendMessage(book);
-            }
-
-            return true;
+        int count = 1;
+        for (String book : books) {
+            sender.sendMessage("§e----- Book " + count++ + " -----");
+            sender.sendMessage(book);
         }
 
-        return false;
+        return true;
     }
 }
