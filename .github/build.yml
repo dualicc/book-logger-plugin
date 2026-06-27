@@ -1,1 +1,45 @@
+name: Build Plugin
+on: [push, workflow_dispatch]
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 (For Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          arguments: clean build
+
+      - name: Save Compiled Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-plugin
+          path: '**/build/libs/*.jar'name: Build Plugin
+on: [push, workflow_dispatch] # workflow_dispatch lets you run it manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          arguments: clean build
